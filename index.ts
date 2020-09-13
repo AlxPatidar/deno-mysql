@@ -1,10 +1,8 @@
 import { Application } from "https://deno.land/x/oak/mod.ts";
-import { config } from "https://deno.land/x/dotenv/mod.ts";
-
 import router from './routes/router.ts';
+import config from './config/environment.ts'
 
 const app = new Application();
-const env = config();
 
 app.use(async (ctx, next) => {
 	const start = Date.now();
@@ -21,7 +19,7 @@ app.use(async (ctx, next) => {
 app.use(router.routes())
 app.use(router.allowedMethods())
 
-const port: number = parseInt(env.PORT) || 4000
+const port: number = parseInt(config.PORT) || 4000
 // confirm server is running
 console.log(`🚀 Server is listing on port ${port} 🚀`)
 // create server on port 4000
