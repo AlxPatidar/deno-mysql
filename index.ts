@@ -1,7 +1,7 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import router from './routes/router.ts';
 
 const app = new Application();
-const router = new Router();
 
 app.use(async (ctx, next) => {
 	const start = Date.now();
@@ -17,11 +17,6 @@ app.use(async (ctx, next) => {
 // apply routes middleware for read routes
 app.use(router.routes())
 app.use(router.allowedMethods())
-
-// create get route
-router.get("/", ({ response }) => {
-	response.body = "Hello World!";
-})
 
 // confirm server is running
 console.log('🚀 Server is listing on port 4000 🚀')
