@@ -1,11 +1,30 @@
-import { serve } from 'https://deno.land/std@0.68.0/http/server.ts'
+import { Application } from "https://deno.land/x/oak/mod.ts";
 
-// create server on port 4000
-const server = serve({ port: 4000 })
+const app = new Application();
+
+// Logger
+app.use(async (ctx, next) => {
+	await next();
+	const rt = ctx.response.headers.get("X-Response-Time");
+	console.log(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
+});
+
+// Timing
+app.use(async (ctx, next) => {
+	const start = Date.now();
+	await next();
+	const ms = Date.now() - start;
+	ctx.response.headers.set("X-Response-Time", `${ms}ms`);
+});
+
+// Hello World!
+app.use((ctx) => {
+	ctx.response.body = "Hello World!";
+});
+
 // confirm server is running
 console.log('🚀 Server is listing on port 4000 🚀')
+// create server on port 4000
+await app.listen({ port: 4000 });
 
-// response on request
-for await (const req of server) {
-	req.respond({ body: 'Hello world!' })
-}
+
