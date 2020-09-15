@@ -1,20 +1,73 @@
-export const getUsers = ({ request, response }: { request: any; response: any }) => {
+import * as UserModel from '../models/user.ts'
+
+/**
+  * @description Get all users
+  * @route GET /users
+  */
+export const getUsers = async ({ request, response }: { request: any; response: any }) => {
+    const users = await UserModel.users()
     response.status = 200;
-    response.body = 'getUsers'
+    response.body = {
+        message: 'Fetch users list.',
+        data: users.rows
+    }
 }
-export const getUser = ({ request, response }: { request: any; response: any }) => {
+/**
+   * @description Get user by id
+   * @route POST /user/:userId
+   */
+export const getUser = async ({ params, response }: { params: any; response: any }) => {
+    const user = await UserModel.user(params.userId)
     response.status = 200;
-    response.body = 'getUser'
+    response.body = {
+        message: 'User detail fetch successfully.',
+        data: user.rows
+    }
 }
-export const createUser = ({ request, response }: { request: any; response: any }) => {
+/**
+   * @description Create user
+   * @route GET users
+   */
+export const createUser = async ({ request, response }: { request: any; response: any }) => {
+    const body = await request.body();
+    const userInfo: UserModel.User = await body.value;
+    const user = await UserModel.createUser(userInfo)
     response.status = 200;
-    response.body = 'addUser'
+    response.body = user
+    response.message = 'User created successfully.'
 }
-export const updateUser = ({ request, response }: { request: any; response: any }) => {
-    response.status = 200;
-    response.body = 'updateUser'
+/**
+   * @description Update user by id
+   * @route PUT user/:userId
+   */
+export const updateUser = async ({ request, response, params }: { request: any; response: any, params: any }) => {
+    const body = await request.body()
+    const userInfo: any = body.value
+    const user = await UserModel.user(params.userId)
+    if (user) {
+        await UserModel.updateUser(userInfo)
+        response.status = 200;
+        response.body = user
+        response.message = 'User detail updated successfully.'
+    } else {
+        response.status = 400;
+        response.body = { "error": "User not found!" }
+    }
 }
-export const deleteUser = ({ request, response }: { request: any; response: any }) => {
-    response.status = 200;
-    response.body = 'deleteUser'
+/**
+   * @description Delete user by userId
+   * @route DELETE user/:userId
+   */
+export const deleteUser = async ({ request, response, params }: { request: any; response: any, params: any }) => {
+    console.log(params)
+    const user = await UserModel.user(parseInt(params.userId))
+    if (user) {
+        await UserModel.removeUser(parseInt(params.userId))
+        response.status = 200;
+        response.body = user
+        response.message = 'User removed successfully.'
+    } else {
+        response.status = 400;
+        response.body = { "error": "User not found!" }
+    }
 }

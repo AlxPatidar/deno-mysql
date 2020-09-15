@@ -6,9 +6,9 @@ const router = new Router();
 
 // users restful API
 router.get("/users", UserController.getUsers)
-    .get("/user/:id", UserController.getUser)
+    .get("/user/:userId", UserController.getUser)
     .post("/user", UserController.createUser)
-    .put("/user/:id", UserController.updateUser)
-    .delete("/user/:id", UserController.deleteUser)
+    .put("/user/:userId", UserController.updateUser)
+    .delete("/user/:userId", UserController.deleteUser)
 
 export default router
